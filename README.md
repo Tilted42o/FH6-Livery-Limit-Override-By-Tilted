@@ -1,81 +1,102 @@
-# FH6 Livery Limit Override — By Tilted42o
+<div align="center">
 
-A Forza Horizon 6 livery editor modification for creators who need more room for detailed liveries, replicas, window decals, sponsor-heavy designs, and Forza Painter artwork.
+# FH6 Livery Limit Override
 
-## Layer limits
+### By Tilted42o
 
-| Surface | Vanilla FH6 | Layer Limit Override |
-| --- | ---: | ---: |
-| Left / Right / Top | 3,000 | 30,000 |
-| Front / Rear / Wing / Glass and other supported surfaces | 1,000 | 10,000 |
+**Break past Forza Horizon 6's stock livery layer limits.**
 
-## Current version
+[![Version](https://img.shields.io/badge/version-v2.0.0--beta4-blue)](#downloads)
+[![Windows](https://img.shields.io/badge/platform-Windows%2064--bit-lightgrey)](#installation)
+[![Build](https://img.shields.io/github/actions/workflow/status/lilanimal42o/FH6-Livery-Limit-Override-By-Tilted/build-windows.yml?label=build)](../../actions)
 
-**Layer Limit Override v2.0.0-beta4**
+</div>
 
-v2 replaces the old single-layout detector with a safer compatibility engine:
+---
 
-- Exact known-build profiles are checked first.
-- Unknown prepared builds can use the semantic layer-table detector.
-- The tool refuses to modify an executable when detection is missing, partial, or ambiguous.
-- Every planned original byte is verified before installation.
-- Build-specific verified backups are retained for restoration.
-- Unsupported builds can generate a compatibility report without including the full game executable.
+## Downloads
 
-## Important — Offline Patch prerequisite
+### Recommended
+**[⬇️ Download the full beta4 package](downloads/Layer-Limit-Override-v2.0.0-beta4-By-Tilted42o.zip)**
 
-Some stock/protected FH6 executables do not expose the layer-limit routine in the form required by Layer Limit Override.
+### EXE only
+**[⬇️ Download Layer Limit Override](downloads/Layer-Limit-Override-v2-By-Tilted42o.exe)**
 
-If the tool displays **MISSING OFFLINE PATCH**, close FH6 and download/apply the DVS FH6 Offline Patcher first:
+> The full ZIP is recommended because it includes the profile file, instructions, checksum, and source snapshot.
 
-https://github.com/DVS-code/FH6-Offline-Patcher/releases/tag/V1
+---
 
-After that patch has been applied properly, run Layer Limit Override again and select the patched `forzahorizon6.exe`.
+## What it does
 
-**Huge shoutout and credit to DVS for the FH6 Offline Patcher.** DVS is a separate project and is not bundled with Layer Limit Override.
+| Surface | Stock FH6 | Override |
+|---|---:|---:|
+| Left / Right / Top | 3,000 | **30,000** |
+| Front / Rear / Wing / Glass | 1,000 | **10,000** |
+
+Built for painters making detailed drift liveries, replicas, window decals, sponsor-heavy designs, and large Forza Painter imports.
+
+---
 
 ## Installation
 
-1. Download the latest Layer Limit Override package.
-2. Extract the whole ZIP to a normal folder.
-3. Close Forza Horizon 6.
+1. Download the **full beta4 package** above.
+2. Extract the ZIP.
+3. Close **Forza Horizon 6**.
 4. Run **Layer Limit Override v2 - By Tilted42o.exe**.
-5. Select your installed `forzahorizon6.exe`.
-6. If **MISSING OFFLINE PATCH** appears, use the DVS link above, apply that prerequisite properly, then rerun Layer Limit Override.
-7. Confirm the detected build and apply the layer override.
-8. Keep the generated backup if you want one-click restore for that game build.
+5. Select your `forzahorizon6.exe`.
+6. Confirm the detected build and apply the override.
 
-## Restore
+### Missing Offline Patch
 
-Run Layer Limit Override again and select the same patched executable. When its verified patched state is detected, the tool can restore the matching original backup.
+If the program says **MISSING OFFLINE PATCH**, your FH6 executable must be prepared first.
 
-Backups use a build-specific name:
+Download the DVS FH6 Offline Patcher here:
 
-```
-forzahorizon6.exe.lu-layers-backup-<build-hash>
-```
+**https://github.com/DVS-code/FH6-Offline-Patcher/releases/tag/V1**
 
-This prevents a backup from an older FH6 update from being mistaken for the current build.
+Apply the DVS patch properly, then run Layer Limit Override again and select the patched `forzahorizon6.exe`.
 
-## Compatibility profiles
+**Huge shoutout and credit to DVS for the FH6 Offline Patcher.** DVS is a separate project and is not bundled with this mod.
 
-Additional exact-build profiles can be placed in:
+---
 
-```
-LayerLimitOverride.profiles.json
-```
+## Safety
 
-See [PROFILE_FORMAT.md](PROFILE_FORMAT.md) for the schema and safety requirements.
+Layer Limit Override is designed to **fail closed**.
+
+It will not modify the executable if detection is missing, incomplete, ambiguous, or if the expected bytes do not match. It also creates a verified build-specific backup before replacing the file.
+
+Backups use this format:
+
+`forzahorizon6.exe.lu-layers-backup-<build-hash>`
+
+Run the tool again on the same patched executable to restore its verified original backup.
+
+---
+
+## Project layout
+
+- **downloads/** — ready-to-use EXE and full ZIP
+- **src/** — complete Go source
+- **docs/** — technical documentation, checksum, and test results
+- **LayerLimitOverride.profiles.json** — external compatibility profiles
+- **.github/workflows/** — automated Windows build
+
+---
 
 ## Beta status
 
-This is a compatibility-engine beta. It is deliberately designed to **fail closed** rather than guess.
+Current release: **v2.0.0-beta4**
 
-If a prepared executable is still unsupported, no file is changed. Generate the compatibility report and include it with the FH6 version/storefront when reporting the issue.
+The compatibility engine supports exact known builds plus semantic layer-table detection for prepared executables. Unknown layouts are rejected instead of being patched blindly.
+
+If an unsupported prepared build is detected, the tool can generate a small compatibility report containing hashes and detector information without including the full game executable.
+
+---
 
 ## Credits
 
-- **Layer Limit Override:** Tilted42o
-- **DVS FH6 Offline Patcher:** DVS — https://github.com/DVS-code/FH6-Offline-Patcher
+**Layer Limit Override:** Tilted42o  
+**FH6 Offline Patcher:** DVS
 
 This is an unofficial community project and is not affiliated with Microsoft, Xbox, Playground Games, Turn 10, or the Forza franchise.
