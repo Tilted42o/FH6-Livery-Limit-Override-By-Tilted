@@ -10,6 +10,7 @@ on:
       - "LayerLimitOverride.profiles.json"
       - "README_FIRST.txt"
       - "PROFILE_FORMAT.md"
+      - ".github/workflows/build-windows.yml"
 
 permissions:
   contents: read
