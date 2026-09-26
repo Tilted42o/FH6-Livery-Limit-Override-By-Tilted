@@ -7,10 +7,11 @@ on:
     paths:
       - "src/**"
       - "LayerLimitOverride.profiles.json"
+      - "docs/**"
       - ".github/workflows/build-windows.yml"
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   build:
@@ -33,39 +34,30 @@ jobs:
         run: |
           $env:GOOS = "windows"
           $env:GOARCH = "amd64"
-          go build -trimpath -ldflags="-H=windowsgui -s -w" -o "../Layer-Limit-Override-v2-By-Tilted42o.exe" .
+          go build -trimpath -ldflags="-H=windowsgui -s -w" -o "../Layer Limit Override v2 - By Tilted42o.exe" .
 
-      - name: Build download package
+      - name: Build complete release ZIP
         shell: pwsh
         run: |
-          New-Item -ItemType Directory -Force downloads | Out-Null
-          Copy-Item "Layer-Limit-Override-v2-By-Tilted42o.exe" "downloads/Layer-Limit-Override-v2-By-Tilted42o.exe" -Force
+          $release = "Layer Limit Override v2.0.0-beta4 - By Tilted42o"
+          Remove-Item $release -Recurse -Force -ErrorAction SilentlyContinue
+          New-Item -ItemType Directory -Force $release | Out-Null
 
-          $stage = "Layer Limit Override v2.0.0-beta4 - By Tilted42o"
-          Remove-Item $stage -Recurse -Force -ErrorAction SilentlyContinue
-          New-Item -ItemType Directory -Force $stage | Out-Null
+          Copy-Item "Layer Limit Override v2 - By Tilted42o.exe" $release
+          Copy-Item "LayerLimitOverride.profiles.json" $release
+          Copy-Item "docs/INSTALL.txt" "$release/README_FIRST.txt"
+          Copy-Item "docs/PROFILE_FORMAT.md" $release
+          Copy-Item "docs/TEST_RESULTS.txt" $release
+          Copy-Item -Recurse "src" "$release/Source"
 
-          Copy-Item "Layer-Limit-Override-v2-By-Tilted42o.exe" "$stage/Layer Limit Override v2 - By Tilted42o.exe"
-          Copy-Item "LayerLimitOverride.profiles.json" $stage
-          Copy-Item "docs/INSTALL.txt" "$stage/README_FIRST.txt"
-          Copy-Item "docs/PROFILE_FORMAT.md" $stage
-          Copy-Item "docs/TEST_RESULTS.txt" $stage
-          Copy-Item -Recurse "src" "$stage/Source"
+          $hash = (Get-FileHash "$release/Layer Limit Override v2 - By Tilted42o.exe" -Algorithm SHA256).Hash.ToLower()
+          "$hash  Layer Limit Override v2 - By Tilted42o.exe" | Set-Content "$release/SHA256.txt"
 
-          $hash = (Get-FileHash "$stage/Layer Limit Override v2 - By Tilted42o.exe" -Algorithm SHA256).Hash.ToLower()
-          "$hash  Layer Limit Override v2 - By Tilted42o.exe" | Set-Content "$stage/SHA256.txt"
+          Compress-Archive -Path $release -DestinationPath "Layer-Limit-Override-v2.0.0-beta4-By-Tilted42o.zip" -Force
 
-          Compress-Archive -Path $stage -DestinationPath "downloads/Layer-Limit-Override-v2.0.0-beta4-By-Tilted42o.zip" -Force
-
-      - name: Publish downloads to repository
-        shell: pwsh
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add downloads/
-          if (git diff --cached --quiet) {
-            Write-Host "Downloads are already current."
-          } else {
-            git commit -m "Publish beta4 downloads [skip ci]"
-            git push
-          }
+      - name: Upload complete release ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: Layer-Limit-Override-v2.0.0-beta4-By-Tilted42o
+          path: Layer-Limit-Override-v2.0.0-beta4-By-Tilted42o.zip
+          if-no-files-found: error
