@@ -1,0 +1,40 @@
+name: Clean Beta4 Release
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "RELEASE_NOTES.md"
+      - ".github/workflows/clean-release.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  clean-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Normalize release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -e
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git tag -f v2.0.0-beta4 "$GITHUB_SHA"
+          git push origin refs/tags/v2.0.0-beta4 --force
+
+          if gh release view code >/dev/null 2>&1; then
+            gh release edit code               --tag v2.0.0-beta4               --title "FH6 Livery Limit Override v2.0.0-beta4"               --notes-file RELEASE_NOTES.md               --latest
+          else
+            gh release edit v2.0.0-beta4               --title "FH6 Livery Limit Override v2.0.0-beta4"               --notes-file RELEASE_NOTES.md               --latest
+          fi
+
+          git push origin :refs/tags/code || true
