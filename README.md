@@ -39,7 +39,7 @@ Built for detailed liveries, replicas, window decals, sponsor-heavy designs, and
 6. Select your `forzahorizon6.exe`.
 7. Confirm the detected build and apply the override.
 
-> **Do not pull the EXE out by itself.** The release is designed to be used as the complete extracted folder.
+> **Do not pull the Override EXE out by itself leave in folder.** 
 
 ## Missing Offline Patch
 
