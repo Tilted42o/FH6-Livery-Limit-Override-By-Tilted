@@ -1,0 +1,64 @@
+name: Build Layer Limit Override
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "Source/**"
+      - "LayerLimitOverride.profiles.json"
+      - "README_FIRST.txt"
+      - "PROFILE_FORMAT.md"
+
+permissions:
+  contents: read
+
+jobs:
+  test-and-build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.23.x"
+
+      - name: Run tests
+        working-directory: Source
+        run: go test ./...
+
+      - name: Build Windows GUI
+        working-directory: Source
+        shell: pwsh
+        run: |
+          $env:GOOS = "windows"
+          $env:GOARCH = "amd64"
+          go build -trimpath -ldflags="-H=windowsgui -s -w" -o "../Layer Limit Override v2 - By Tilted42o.exe" .
+
+      - name: Create beta package
+        shell: pwsh
+        run: |
+          $package = "Layer Limit Override v2.0.0-beta4 - By Tilted42o"
+          New-Item -ItemType Directory -Force -Path $package | Out-Null
+          Copy-Item "Layer Limit Override v2 - By Tilted42o.exe" $package
+          Copy-Item "LayerLimitOverride.profiles.json" $package
+          Copy-Item "README_FIRST.txt" $package
+          Copy-Item "PROFILE_FORMAT.md" $package
+          Copy-Item "TEST_RESULTS.txt" $package
+          Copy-Item -Recurse "Source" "$package/Source"
+
+          $hash = (Get-FileHash "$package/Layer Limit Override v2 - By Tilted42o.exe" -Algorithm SHA256).Hash.ToLower()
+          "$hash  Layer Limit Override v2 - By Tilted42o.exe" | Set-Content "$package/SHA256.txt"
+
+          Compress-Archive -Path $package -DestinationPath "Layer-Limit-Override-v2.0.0-beta4-By-Tilted42o.zip" -Force
+
+      - name: Upload beta4 package
+        uses: actions/upload-artifact@v4
+        with:
+          name: Layer-Limit-Override-v2.0.0-beta4-By-Tilted42o
+          path: Layer-Limit-Override-v2.0.0-beta4-By-Tilted42o.zip
+          if-no-files-found: error
