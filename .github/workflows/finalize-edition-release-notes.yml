@@ -1,0 +1,121 @@
+name: Finalize Edition Release Notes
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/finalize-edition-release-notes.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update release pages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          cat > sticker-decals-notes.md <<'EOF'
+          # FH6 Livery Limit Override - Sticker + Decal Edition v1.0.0
+
+          Separate release for painters who also need larger saved decals / vinyl groups.
+
+          ## Features
+
+          - Left / Right / Top sticker layers: **30,000**
+          - Other supported sticker surfaces: **10,000**
+          - Saved decal / vinyl-group limit: **6,500 direct child entries**
+          - Recognizes and upgrades the existing Sticker Only release
+          - Recognizes beta5's experimental 30,000 decal cap and migrates it to 6,500
+          - Verified build-specific backup and restore support
+          - Fails closed if the executable or patch state cannot be verified
+
+          ## Requirements
+
+          - Windows 10 / 11, 64-bit
+          - Forza Horizon 6
+          - Extract the entire ZIP and keep all included files together
+          - Some stock/protected FH6 executables require the DVS FH6 Offline Patcher first
+
+          DVS Offline Patcher:
+          https://github.com/DVS-code/FH6-Offline-Patcher/releases/tag/V1
+
+          ## Install
+
+          1. Download **Layer-Limit-Override-Sticker-Decal-Edition-v1.0.0-By-Tilted42o.zip**.
+          2. Extract the entire ZIP to one folder.
+          3. Keep every included file together.
+          4. Close Forza Horizon 6.
+          5. Run **Layer Limit Override - Sticker + Decal - By Tilted42o.exe**.
+          6. Select your **forzahorizon6.exe**.
+          7. Read the confirmation screen and apply the override.
+
+          If the tool displays **MISSING OFFLINE PATCH**, apply the DVS offline patch first, then rerun Layer Limit Override.
+
+          ## Performance Warning
+
+          Decals/vinyl groups above Forza Horizon 6's original 3,000-layer limit can lower frame rates while inside the livery editor and can make saving take longer.
+
+          Based on testing so far, this appears to affect the editor only. No noticeable performance impact has been observed after leaving the editor and returning to normal driving/gameplay.
+
+          ## Notes
+
+          - The 6,500 decal limit is intentionally lower than beta5's experimental 30,000 cap for better editor stability.
+          - A saved decal/vinyl group must still fit the remaining capacity of the surface you place it on.
+          - The tool keeps a verified original backup and retains the previous patched executable as an additional recovery copy during supported upgrades.
+
+          ## Credits
+
+          - **Tilted42o** - Layer Limit Override
+          - **DVS** - FH6 Offline Patcher
+          EOF
+
+          cat > sticker-only-notes.md <<'EOF'
+          # FH6 Livery Limit Override - Sticker Only Edition v2.0.0-beta4
+
+          The original Sticker Only release.
+
+          ## Features
+
+          - Left / Right / Top: **30,000 layers**
+          - Other supported sticker surfaces: **10,000 layers**
+          - Does **not** raise the saved decal/vinyl-group limit
+          - Verified build-specific backups
+          - Restore support
+          - Compatibility reporting for unsupported builds
+          - Fails closed when a compatible patch state cannot be verified
+
+          ## Requirements
+
+          - Windows 10 / 11, 64-bit
+          - Forza Horizon 6
+          - Extract the entire ZIP and keep the included files together
+          - Some stock/protected FH6 executables require the DVS FH6 Offline Patcher first
+
+          DVS Offline Patcher:
+          https://github.com/DVS-code/FH6-Offline-Patcher/releases/tag/V1
+
+          ## Install
+
+          1. Download **Layer-Limit-Override-v2.0.0-beta4-By-Tilted42o.zip**.
+          2. Extract the entire ZIP.
+          3. Keep all included files together.
+          4. Close Forza Horizon 6.
+          5. Run the included Layer Limit Override EXE.
+          6. Select your **forzahorizon6.exe**.
+          7. Apply the override.
+
+          ## Credits
+
+          - **Tilted42o** - Layer Limit Override
+          - **DVS** - FH6 Offline Patcher
+          EOF
+
+          gh release edit sticker-decals-v1.0.0 --title "FH6 Livery Limit Override - Sticker + Decal Edition v1.0.0" --notes-file sticker-decals-notes.md --latest
+          gh release edit v2.0.0-beta4 --title "FH6 Livery Limit Override - Sticker Only Edition v2.0.0-beta4" --notes-file sticker-only-notes.md
