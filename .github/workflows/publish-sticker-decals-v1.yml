@@ -30,7 +30,7 @@ jobs:
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path release-src | Out-Null
-          Expand-Archive -Path ".release-src/sticker-decals-v1.0.0-source.zip" -DestinationPath "release-src" -Force
+          tar -xf ".release-src/sticker-decals-v1.0.0-source.zip" -C "release-src"
 
       - name: Verify source and tests
         working-directory: release-src/Source
